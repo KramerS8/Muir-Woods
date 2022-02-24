@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset=utf-8 />
+	<title>Muir Woods National Monument</title>
+	<meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.css" />
+	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.1/dist/leaflet.css" />
+	<link href="https://fonts.googleapis.com/css?family=Noto+Sans" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css?family=Lora" rel="stylesheet">
+
+  <style>
+  body {
+  			margin: 0;
+  			padding: 0;
+  			background: "whitesmoke";
+  			font-family: "Noto Sans", sans-serif;
+  			color: #3d3d3d;
+  		}
+
+  		h1 {
+  			position: absolute;
+  			margin-top: 0;
+  			top: 10px;
+  			left: 45px;
+  			font-size: 2em;
+  			font-family: "Lora", serif;
+  			letter-spacing: .04em;
+  			padding: 10px 15px;
+  			background: rgba(256, 256, 256);
+  			border: 1px solid grey;
+  			border-radius: 3px;
+  			z-index: 800;
+  		}
+
+  		h2 {
+  			font-family: "Lora", serif;
+  			letter-spacing: .04em;
+  		}
+
+  		#map {
+  			position: absolute;
+  			top: 0;
+  			bottom: 0;
+  			width: 100%;
+  		}
+
+  		section {
+  			position: absolute;
+  			bottom: 0;
+  			left: 10px;
+  			width: 280px;
+  			margin: 20px auto;
+  			padding: 0 15px;
+  			background: rgba(256, 256, 256);
+  			border: 1px solid grey;
+  			border-radius: 3px;
+  			z-index: 800;
+  		}
+
+  		p {
+  			font-size: .9em;
+  			line-height: 1.5em;
+  		}
+
+  		a {
+  			color: #005daa;
+  			text-decoration: none;
+  		}
+
+  		a:hover {
+  			text-decoration: underline;
+  		}
+  </style>
+
+</head>
+
+<body>
+  <h1>Muir Woods</h1>
+
+	<div id='map'></div>
+
+	<section>
+		<h2>About Muir Woods</h2>
+
+		<p>Muir Woods lies in the middle of the redwood's latitudinal range that
+      spans from the California/Oregon border to Big Sur, just south of Monterey.
+       The weather is mild throughout the year, but summer is the busiest time to visit Muir Woods.</p>
+
+		<p>The incredible diversity of flora and fauna at Muir Woods can be daunting
+       some times, elusive at other times. The redwoods themselves dominate the scene,
+        but the humble Steller's jay, ladybugs, ancient horsetail ferns, and the banana
+         slug hold their own beneath the canopy. Plants adapt to low light levels
+          on the forest floor, while whole plant and animal communities bustle in
+           the canopy above our heads.</p>
+		<p>Text provided by <a href="https://www.nps.gov/muwo/learn/index.htm">National Park Service</a></p>
+		<p>Authored by Sara Kramer</p>
+  </section>
+
+  <script src="http://code.jquery.com/jquery-3.1.1.min.js"></script>
+  	<script src="https://unpkg.com/leaflet@1.0.1/dist/leaflet.js"></script>
+
+<script src="data/route.js"></script>
+
+<script>
+var options = {
+			center: [37.897013, -122.589794],
+			zoom: 16
+		}
+
+console.log(data);
+
+var map = L.map('map', options);
+
+var Stamen_Terrain = L.tileLayer('https://stamen-tiles-{s}.a.ssl.fastly.net/terrain/{z}/{x}/{y}{r}.{ext}', {
+	attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+	subdomains: 'abcd',
+	minZoom: 0,
+	maxZoom: 18,
+	ext: 'png'
+}).addTo(map);
+
+//var message = 'BH!';
+
+//L.marker(map.getCenter())
+//.bindTooltip(message)
+//.addTo(map)
+//.openTooltip();
+
+var myRoute = L.geoJson(data, {
+  filter: function(feature) {
+    if(feature.geometry.type =="LineString") {
+      return feature;
+    }
+  },
+  style : function(feature) {
+return {
+  color: "#0011FF",
+  weight: 5,
+  opacity: 0.7,
+  dashArray: "6, 6"
+}
+  }
+}).addTo(map);
+
+var myStops = L.geoJson(data, {
+  filter: function(feature) {
+    if(feature.geometry.type == "Point") {
+        return feature;
+    }
+},
+onEachFeature : function(feature, layer) {
+  layer.bindTooltip(feature.properties['name']);
+}
+}).addTo(map);
+
+
+map.fitBounds(myRoute.getBounds());
+
+
+</script>
+
+</body>
+
+
+</html>
